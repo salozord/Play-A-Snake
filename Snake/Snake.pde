@@ -1,37 +1,38 @@
-class Culebra
+class Snakey
 {
-  //La posicion de la culebra en x.
-  int[] posx;
+  //The positions of the snake and its parts in x.
+  private int[] posx;
 
-  //La posicion de la culebra en y.
-  int[] posy;
+  //The positions of the snake and its parts in y.
+  private int[] posy;
 
-  //El cuerpo
-  int longitud;
+  //The snake's length.
+  private int size;
 
-  //Constructor de cada snake.
-  public Culebra()
+  //Constructor of the snake.
+  public Snakey()
   {
-    posx = new int[5000];
-    posy = new int [5000];
+    posx = new int [Food.WIDTH*Food.HEIGHT];
+    posy = new int [Food.WIDTH*Food.HEIGHT];
     posx[0] = 4;
     posy[0] = 1;
     posx[1] = 3;
     posy[1] = 1;
     posx[2] = 2;
     posy[2] = 1;
-    longitud = 3;
+    size = 3;
   }
 
-  public void mover(int direccion)
+  //Method for the movement of the snake.
+  public void move(short direction)
   {  
-    for(int i = longitud - 1; i > 0; i--)
+    for(int i = size - 1; i > 0; i--)
     {
          posx[i] = posx[i-1];
          posy[i] = posy[i-1];
     }
     
-    switch (direccion)
+    switch (direction)
     {
        case 1:
          posy[0]--;
@@ -48,9 +49,27 @@ class Culebra
     }
   }
 
-  public void comer()
+  //Method called when the snake eats.
+  public void eat()
   {
-    longitud++;
+    size++;
   }
-
+  
+  //Gives the x position of the part i.
+  public int x(int i)
+  {
+    return posx[i];
+  }
+  
+  //Gives the y position of the part i.
+  public int y(int i)
+  {
+    return posy[i];
+  }
+  
+  //The length.
+  public int getSize()
+  {
+    return size;
+  }    
 }

@@ -1,25 +1,36 @@
-class Comida
+class Food
 {
-
-  //Alto y Ancho (Cada casilla tiene 8x8 pixeles)
-  public final int ANCHO = 100;
-  public final int ALTO = 50;
+  //Width and Height (each square has 8x8 pixels)
+  public static final int WIDTH = 32;
+  public static final int HEIGHT = 20;
   
   //la posicion de la comida.
-  int x;
-  int y;
+  private int x;
+  private int y;
 
-  //Constructor de la comida.
-  public Comida()
+  //Constructor of the food.
+  public Food()
   {
-    x = int(random(ANCHO));
-    y = int(random(ALTO));
+    x = int(random(WIDTH));
+    y = int(random(HEIGHT));
   }
 
-  //Genera la comida de manera aleatoria.
-  public void generarComida()
+  //Generates randomly the food.
+  public void generateFood()
   {
-    this.x = int(random(ANCHO));
-    this.y = int(random(ALTO));
+    this.x = int(random(WIDTH));
+    this.y = int(random(HEIGHT));
+  }
+  
+  //Gives the x position.
+  public int x()
+  {
+    return x;
+  }
+  
+  //Gives the y position.
+  public int y()
+  {
+    return y;
   }
 }

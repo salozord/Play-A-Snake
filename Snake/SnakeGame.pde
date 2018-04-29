@@ -1,138 +1,152 @@
 
-  //Alto y Ancho (Cada casilla tiene 8x8 pixeles)
-  public final int ANCHO = 100;
-  public final int ALTO = 50;
+  //Width and Height (each square has 8x8 pixels)
+  public static final int WIDTH = 32;
+  public static final int HEIGHT = 20;
+  public static final int PIXELS = 10;
 
-  //la cabeza de la culebra.
-  private Culebra cabeza;
+  //The snake.
+  private Snakey snake;
 
-  //La comida.
-  private Comida comida;
+  //The food.
+  private Food food;
 
-  //El puntaje en el juego
-  private int puntaje;
+  //The score.
+  private int score;
 
-  //El retraso de la culebra.
-  private int retraso;
+  //The speed of the snake
+  private int speed;
 
-  //booleano a ver si esta en juego.
-  private boolean enJuego;
+  //Boolean variable to check if its Alive.
+  private boolean inGame;
 
-  //La dirección del movimiento.
-  private int dir;
+  //The direction of the movement.
+  private short dir;
 
-  //constructor de la clase principal.
+  //The game's main method.
   public void game()
   {
-    cabeza = new Culebra();
-    comida = new Comida();
-    puntaje = 0;
-    retraso = 70;
-    enJuego = true;
+    snake = new Snakey();
+    food = new Food();
+    score = 0;
+    speed = 65;
+    inGame = true;
     dir = 2;
   }
 
-  public void chequearColision()
+  public void checkCollision()
   {
-     if(cabeza.posx[0] < 0 || cabeza.posx[0] >= ANCHO)
+     if(snake.x(0) < 0 || snake.x(0) >= WIDTH)
     {
-      enJuego = false;
+      inGame = false;
     }
-    else if(cabeza.posy[0] < 0 || cabeza.posy[0] >= ALTO)
+    else if(snake.y(0) < 0 || snake.y(0) >= HEIGHT)
     {
-      enJuego = false;
+      inGame = false;
     }
-    else if(cabeza.longitud > 4)
+    else if(snake.getSize() > 4)
     {
-        for(int i = cabeza.longitud - 1  ; i >= 4; i--)
+        for(int i = snake.getSize() - 1  ; i >= 4; i--)
         {
-          if(cabeza.posx[0] == cabeza.posx[i] && cabeza.posy[0] == cabeza.posy[i])
+          if(snake.x(0) == snake.x(i) && snake.y(0) == snake.y(i))
           {
-            enJuego = false;
+            inGame = false;
           }
         }
     }
   }
 
-  public void comio() //<>//
+  public void hasEaten() //<>//
   {
-    if(cabeza.posx[0] == comida.x && cabeza.posy[0] == comida.y)
+    if(snake.x(0) == food.x() && snake.y(0) == food.y())
     {
-      cabeza.comer();
-      puntaje += 5;;
-      //comida.generarComida();
+      snake.eat();
+      score += 5;
+
       int i = 0;
-      while(comida.x == cabeza.posx[i] && comida.y == cabeza.posy[i] && i < cabeza.longitud-1)
+      while(i < snake.getSize())
       {
-        comida.generarComida();
+        if(food.x() == snake.x(i) && food.y() == snake.y(i))
+        {
+         food.generateFood(); 
+        }
         i++;
       }
     }
   }
+  
+  //Check the keys that are pressed
+  public void keysPressed()
+  {
+    if (keyCode == UP && dir != 3)
+    {
+      dir = 1;
+    }
+    else if (keyCode == DOWN && dir != 1)
+    {
+      dir = 3;
+    }
+    else if (keyCode == RIGHT && dir != 4)
+    {
+      dir = 2;
+    }
+    else if (keyCode == LEFT && dir != 2)
+    {
+      dir = 4;
+    }
+    else if (keyCode == ENTER && !inGame)
+    {
+      game();
+    }
+  }
+    
+  //The settings.
   void settings()
   {
-    size(800, 430, P2D);
+    size(WIDTH*PIXELS, (HEIGHT*PIXELS)+30, P2D);
     game();
   }
 
+  //The main method of the game.
   void draw()
   {
     fill(0, 0, 210);
     stroke(0);
-    rect(0, 0, ANCHO*8, ALTO*8);
+    rect(0, 0, WIDTH*PIXELS, HEIGHT*PIXELS);
     noStroke();
     fill(0);
-    rect(0, 400, ANCHO*8, (ANCHO*8)+30);
+    rect(0, HEIGHT*PIXELS, WIDTH*PIXELS, (HEIGHT*PIXELS)+30);
     textAlign(LEFT, BOTTOM);
     fill(255);
-    text("PUNTAJE: " + puntaje + "  -  LONGITUD: " + cabeza.longitud, 0, height-8);
-    if(enJuego)
+    text("SCORE: " + score + "  -  LENGTH: " + snake.getSize(), 20, (HEIGHT*PIXELS)+22);
+    keysPressed();
+    if(inGame)
     {
-      if(keyCode == UP && dir != 3)
-      {
-        dir = 1;
-      }
-      else if (keyCode == DOWN && dir != 1)
-      {
-        dir = 3;
-      }
-      else if ((keyCode == RIGHT && dir != 4))
-      {
-        dir = 2;
-      }
-      else if (keyCode == LEFT && dir != 2)
-      {
-        dir = 4;
-      }
-      cabeza.mover(dir);
-      chequearColision();
-      comio();
-      dibujar();
+      snake.move(dir);
+      checkCollision();
+      hasEaten();
+      paint();
     }
     else
     {
       textAlign(CENTER, CENTER);
       fill(255);
-      text("GAME OVER :(\nPULSA ENTER PARA REINICIAR", 400, 185);
+      text("GAME OVER :(\nENTER TO RESTART", (WIDTH*PIXELS)/2, (HEIGHT*PIXELS)/2);
     }
-    if(keyCode == ENTER && !enJuego)
-    {
-      game();
-    }
-    delay(retraso);
+    delay(speed);
   }
 
-  void dibujar()
+  //Paints everything.
+  void paint()
   {
     //clear();
     //background(204, 204, 255);
-    for(int i = 0; i < cabeza.longitud; i++)
+    for(int i = 0; i < snake.getSize(); i++)
     {
       fill(0, 255, 0);
       stroke(0);
-      rect((cabeza.posx[i])*8, (cabeza.posy[i])*8, 8, 8, 2);
+      rect((snake.x(i))*PIXELS, (snake.y(i))*PIXELS, PIXELS, PIXELS, 2);
     }
     fill(255, 0, 0);
     stroke(0);
-    rect((comida.x)*8, (comida.y)*8, 8, 8, 2);
+    rect((food.x())*PIXELS, (food.y())*PIXELS, PIXELS, PIXELS, 2);
   }
