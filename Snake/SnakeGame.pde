@@ -1,6 +1,6 @@
 //Width and Height (each square has 8x8 pixels)
-public static final int WIDTH = 32;
-public static final int HEIGHT = 20;
+public static final int WIDTH = 36;
+public static final int HEIGHT = 24;
 public static final int PIXELS = 10;
 
 //The snake.
@@ -24,6 +24,9 @@ private int level;
 //Boolean variable to check if its Alive.
 private boolean inGame;
 
+//Boolean variable to check if its paused.
+private boolean isPaused;
+
 //The direction of the movement.
 private short dir;
 
@@ -37,21 +40,22 @@ public void game()
   speed = 75;
   level = 1;
   inGame = true;
+  isPaused = false;
   dir = 2;
 }
 
 //Method for checking if the snake's crashed with sth.
 public void checkCollision()
 {
-   if(snake.x(0) < 0 || snake.x(0) >= WIDTH)
-  {
-    inGame = false;
-  }
-  else if(snake.y(0) < 0 || snake.y(0) >= HEIGHT)
-  {
-    inGame = false;
-  }
-  else if(snake.getSize() > 4)
+  //if(snake.x(0) < 0 || snake.x(0) >= WIDTH)
+  //{
+  //  inGame = false;
+  //}
+  //else if(snake.y(0) < 0 || snake.y(0) >= HEIGHT)
+  //{
+  //  inGame = false;
+  //}
+  if(snake.getSize() > 4)
   {
       for(int i = snake.getSize() - 1  ; i >= 4; i--)
       {
@@ -107,6 +111,10 @@ public void keysPressed()
   {
     game();
   }
+  else if (key == 'p')
+  {
+    isPaused = !isPaused;
+  }
 }
 
 //Increases partially the speed of the snake.
@@ -114,7 +122,7 @@ public void levelUp()
 {
   if(levelUpScore != 0 && levelUpScore % 25 == 0)
   {
-    speed -= speed*0.033;
+    speed -= speed*0.085;
     level++;
     levelUpScore = 0;
   }
@@ -123,11 +131,21 @@ public void levelUp()
 //Advices leveling in the game.
 public void adviceLeveling()
 {
+  int m = millis();
   if(score != 0 && levelUpScore == 0)
   {
     textAlign(CENTER,CENTER);
-    fill(int(random(256)), int(random(256)), int(random(256)));
+    textSize(17);
+    if (m % 501 < 250)
+    {
+      fill(255, 0, 0);
+    }
+    else
+    {
+      fill(0, 0, 0);
+    }
     text("LEVEL UP !", (WIDTH*PIXELS)/2, (HEIGHT*PIXELS)/2);
+    textSize(12);
   }
 }
 
@@ -147,24 +165,30 @@ void settings()
 void draw()
 {
   fill(102, 153, 255);
-  stroke(0);
-  rect(0, 0, WIDTH*PIXELS, HEIGHT*PIXELS);
-  noStroke();
+  rect(0, 0, WIDTH*PIXELS, (HEIGHT*PIXELS)+(2*PIXELS));
   fill(0);
-  rect(0, HEIGHT*PIXELS, WIDTH*PIXELS, (HEIGHT*PIXELS)+30);
+  rect(0, (HEIGHT*PIXELS)+PIXELS, WIDTH*PIXELS, (HEIGHT*PIXELS)+30);
   textAlign(LEFT, BOTTOM);
   fill(255);
-  text("SCORE: " + score + " - LENGTH: " + snake.getSize(), 15, (HEIGHT*PIXELS)+22);
+  text("SCORE: " + score + " - LENGTH: " + snake.getSize(), 15, (HEIGHT*PIXELS)+27);
   textAlign(RIGHT, BOTTOM);
   fill(245, 0, 0);
-  text("LEVEL: " + level, (WIDTH*PIXELS)-15, (HEIGHT*PIXELS)+22);
+  text("LEVEL: " + level, (WIDTH*PIXELS)-15, (HEIGHT*PIXELS)+27);
   keysPressed();
-  if(inGame)
+  if(isPaused)
   {
+    textAlign(CENTER, CENTER);
+    fill(255, 128, 0);
+    textSize(17);
+    text("PAUSED!", (WIDTH*PIXELS)/2, (HEIGHT*PIXELS)/2);
+    textSize(12);
+  }
+  else if(inGame)
+  {
+    paint();
     snake.move(dir);
     checkCollision();
     hasEaten();
-    paint();
     levelUp();
     adviceLeveling();
   }

@@ -28,8 +28,8 @@ class Snakey
   //Constructor of the snake.
   public Snakey()
   {
-    posx = new int [Food.WIDTH*Food.HEIGHT];
-    posy = new int [Food.WIDTH*Food.HEIGHT];
+    posx = new int [WIDTH*PIXELS*HEIGHT];
+    posy = new int [WIDTH*HEIGHT];
     posx[0] = 4;
     posy[0] = 1;
     posx[1] = 3;
@@ -52,15 +52,31 @@ class Snakey
     {
        case 1:
          posy[0]--;
+         if(posy[0] == -1)
+         {
+           posy[0] = HEIGHT;
+         }
          break;
        case 3:
          posy[0]++;
+         if(posy[0] > HEIGHT)
+         {
+           posy[0] = 0;
+         }
          break;
        case 2:
          posx[0]++;
+         if(posx[0] > WIDTH - 1)
+         {
+           posx[0] = 0;
+         }
          break;
        case 4:
          posx[0]--;
+         if(posx[0]== -1)
+         {
+           posx[0] = WIDTH - 1;
+         }
          break;
     }
   }
@@ -91,10 +107,6 @@ class Snakey
 }
 class Food
 {
-  //Width and Height (each square has 8x8 pixels)
-  public static final int WIDTH = 32;
-  public static final int HEIGHT = 20;
-  
   //la posicion de la comida.
   private int x;
   private int y;
@@ -112,13 +124,13 @@ class Food
     this.x = PApplet.parseInt(random(WIDTH));
     this.y = PApplet.parseInt(random(HEIGHT));
   }
-  
+
   //Gives the x position.
   public int x()
   {
     return x;
   }
-  
+
   //Gives the y position.
   public int y()
   {
@@ -126,8 +138,8 @@ class Food
   }
 }
 //Width and Height (each square has 8x8 pixels)
-public static final int WIDTH = 32;
-public static final int HEIGHT = 20;
+public static final int WIDTH = 36;
+public static final int HEIGHT = 24;
 public static final int PIXELS = 10;
 
 //The snake.
@@ -151,6 +163,9 @@ private int level;
 //Boolean variable to check if its Alive.
 private boolean inGame;
 
+//Boolean variable to check if its paused.
+private boolean isPaused;
+
 //The direction of the movement.
 private short dir;
 
@@ -164,21 +179,22 @@ public void game()
   speed = 75;
   level = 1;
   inGame = true;
+  isPaused = false;
   dir = 2;
 }
 
 //Method for checking if the snake's crashed with sth.
 public void checkCollision()
 {
-   if(snake.x(0) < 0 || snake.x(0) >= WIDTH)
-  {
-    inGame = false;
-  }
-  else if(snake.y(0) < 0 || snake.y(0) >= HEIGHT)
-  {
-    inGame = false;
-  }
-  else if(snake.getSize() > 4)
+  //if(snake.x(0) < 0 || snake.x(0) >= WIDTH)
+  //{
+  //  inGame = false;
+  //}
+  //else if(snake.y(0) < 0 || snake.y(0) >= HEIGHT)
+  //{
+  //  inGame = false;
+  //}
+  if(snake.getSize() > 4)
   {
       for(int i = snake.getSize() - 1  ; i >= 4; i--)
       {
@@ -234,6 +250,10 @@ public void keysPressed()
   {
     game();
   }
+  else if (key == 'p')
+  {
+    isPaused = !isPaused;
+  }
 }
 
 //Increases partially the speed of the snake.
@@ -241,7 +261,7 @@ public void levelUp()
 {
   if(levelUpScore != 0 && levelUpScore % 25 == 0)
   {
-    speed -= speed*0.033f;
+    speed -= speed*0.085f;
     level++;
     levelUpScore = 0;
   }
@@ -250,11 +270,21 @@ public void levelUp()
 //Advices leveling in the game.
 public void adviceLeveling()
 {
+  int m = millis();
   if(score != 0 && levelUpScore == 0)
   {
     textAlign(CENTER,CENTER);
-    fill(PApplet.parseInt(random(256)), PApplet.parseInt(random(256)), PApplet.parseInt(random(256)));
+    textSize(17);
+    if (m % 501 < 250)
+    {
+      fill(255, 0, 0);
+    }
+    else
+    {
+      fill(0, 0, 0);
+    }
     text("LEVEL UP !", (WIDTH*PIXELS)/2, (HEIGHT*PIXELS)/2);
+    textSize(12);
   }
 }
 
@@ -274,24 +304,30 @@ public void settings()
 public void draw()
 {
   fill(102, 153, 255);
-  stroke(0);
-  rect(0, 0, WIDTH*PIXELS, HEIGHT*PIXELS);
-  noStroke();
+  rect(0, 0, WIDTH*PIXELS, (HEIGHT*PIXELS)+(2*PIXELS));
   fill(0);
-  rect(0, HEIGHT*PIXELS, WIDTH*PIXELS, (HEIGHT*PIXELS)+30);
+  rect(0, (HEIGHT*PIXELS)+PIXELS, WIDTH*PIXELS, (HEIGHT*PIXELS)+30);
   textAlign(LEFT, BOTTOM);
   fill(255);
-  text("SCORE: " + score + " - LENGTH: " + snake.getSize(), 15, (HEIGHT*PIXELS)+22);
+  text("SCORE: " + score + " - LENGTH: " + snake.getSize(), 15, (HEIGHT*PIXELS)+27);
   textAlign(RIGHT, BOTTOM);
   fill(245, 0, 0);
-  text("LEVEL: " + level, (WIDTH*PIXELS)-15, (HEIGHT*PIXELS)+22);
+  text("LEVEL: " + level, (WIDTH*PIXELS)-15, (HEIGHT*PIXELS)+27);
   keysPressed();
-  if(inGame)
+  if(isPaused)
   {
+    textAlign(CENTER, CENTER);
+    fill(255, 128, 0);
+    textSize(17);
+    text("PAUSED!", (WIDTH*PIXELS)/2, (HEIGHT*PIXELS)/2);
+    textSize(12);
+  }
+  else if(inGame)
+  {
+    paint();
     snake.move(dir);
     checkCollision();
     hasEaten();
-    paint();
     levelUp();
     adviceLeveling();
   }

@@ -12,8 +12,8 @@ class Snakey
   //Constructor of the snake.
   public Snakey()
   {
-    posx = new int [Food.WIDTH*Food.HEIGHT];
-    posy = new int [Food.WIDTH*Food.HEIGHT];
+    posx = new int [WIDTH*PIXELS*HEIGHT];
+    posy = new int [WIDTH*HEIGHT];
     posx[0] = 4;
     posy[0] = 1;
     posx[1] = 3;
@@ -36,15 +36,31 @@ class Snakey
     {
        case 1:
          posy[0]--;
+         if(posy[0] == -1)
+         {
+           posy[0] = HEIGHT;
+         }
          break;
        case 3:
          posy[0]++;
+         if(posy[0] > HEIGHT)
+         {
+           posy[0] = 0;
+         }
          break;
        case 2:
          posx[0]++;
+         if(posx[0] > WIDTH - 1)
+         {
+           posx[0] = 0;
+         }
          break;
        case 4:
          posx[0]--;
+         if(posx[0]== -1)
+         {
+           posx[0] = WIDTH - 1;
+         }
          break;
     }
   }
