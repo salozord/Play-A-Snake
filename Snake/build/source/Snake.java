@@ -1,3 +1,130 @@
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class Snake extends PApplet {
+
+class Snakey
+{
+  //The positions of the snake and its parts in x.
+  private int[] posx;
+
+  //The positions of the snake and its parts in y.
+  private int[] posy;
+
+  //The snake's length.
+  private int size;
+
+  //Constructor of the snake.
+  public Snakey()
+  {
+    posx = new int [Food.WIDTH*Food.HEIGHT];
+    posy = new int [Food.WIDTH*Food.HEIGHT];
+    posx[0] = 4;
+    posy[0] = 1;
+    posx[1] = 3;
+    posy[1] = 1;
+    posx[2] = 2;
+    posy[2] = 1;
+    size = 3;
+  }
+
+  //Method for the movement of the snake.
+  public void move(short direction)
+  {
+    for(int i = size - 1; i > 0; i--)
+    {
+         posx[i] = posx[i-1];
+         posy[i] = posy[i-1];
+    }
+
+    switch (direction)
+    {
+       case 1:
+         posy[0]--;
+         break;
+       case 3:
+         posy[0]++;
+         break;
+       case 2:
+         posx[0]++;
+         break;
+       case 4:
+         posx[0]--;
+         break;
+    }
+  }
+
+  //Method called when the snake eats.
+  public void eat()
+  {
+    size++;
+  }
+
+  //Gives the x position of the part i.
+  public int x(int i)
+  {
+    return posx[i];
+  }
+
+  //Gives the y position of the part i.
+  public int y(int i)
+  {
+    return posy[i];
+  }
+
+  //The length.
+  public int getSize()
+  {
+    return size;
+  }
+}
+class Food
+{
+  //Width and Height (each square has 8x8 pixels)
+  public static final int WIDTH = 32;
+  public static final int HEIGHT = 20;
+  
+  //la posicion de la comida.
+  private int x;
+  private int y;
+
+  //Constructor of the food.
+  public Food()
+  {
+    x = PApplet.parseInt(random(WIDTH));
+    y = PApplet.parseInt(random(HEIGHT));
+  }
+
+  //Generates randomly the food.
+  public void generateFood()
+  {
+    this.x = PApplet.parseInt(random(WIDTH));
+    this.y = PApplet.parseInt(random(HEIGHT));
+  }
+  
+  //Gives the x position.
+  public int x()
+  {
+    return x;
+  }
+  
+  //Gives the y position.
+  public int y()
+  {
+    return y;
+  }
+}
 //Width and Height (each square has 8x8 pixels)
 public static final int WIDTH = 32;
 public static final int HEIGHT = 20;
@@ -114,7 +241,7 @@ public void levelUp()
 {
   if(levelUpScore != 0 && levelUpScore % 25 == 0)
   {
-    speed -= speed*0.033;
+    speed -= speed*0.033f;
     level++;
     levelUpScore = 0;
   }
@@ -126,20 +253,20 @@ public void adviceLeveling()
   if(score != 0 && levelUpScore == 0)
   {
     textAlign(CENTER,CENTER);
-    fill(int(random(256)), int(random(256)), int(random(256)));
+    fill(PApplet.parseInt(random(256)), PApplet.parseInt(random(256)), PApplet.parseInt(random(256)));
     text("LEVEL UP !", (WIDTH*PIXELS)/2, (HEIGHT*PIXELS)/2);
   }
 }
 
 //The settings.
-void settings()
+public void settings()
 {
   size(WIDTH*PIXELS, (HEIGHT*PIXELS)+30, P2D);
   game();
 }
 
 //The main method of the game that draws everything.
-void draw()
+public void draw()
 {
   fill(102, 153, 255);
   stroke(0);
@@ -173,7 +300,7 @@ void draw()
 }
 
 //Paints everything.
-void paint()
+public void paint()
 {
   for(int i = 0; i < snake.getSize(); i++)
   {
@@ -184,4 +311,13 @@ void paint()
   fill(255, 0, 0);
   stroke(0);
   rect((food.x())*PIXELS, (food.y())*PIXELS, PIXELS, PIXELS, 2);
+}
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "Snake" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
 }

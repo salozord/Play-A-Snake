@@ -25,13 +25,13 @@ class Snakey
 
   //Method for the movement of the snake.
   public void move(short direction)
-  {  
+  {
     for(int i = size - 1; i > 0; i--)
     {
          posx[i] = posx[i-1];
          posy[i] = posy[i-1];
     }
-    
+
     switch (direction)
     {
        case 1:
@@ -54,22 +54,22 @@ class Snakey
   {
     size++;
   }
-  
+
   //Gives the x position of the part i.
   public int x(int i)
   {
     return posx[i];
   }
-  
+
   //Gives the y position of the part i.
   public int y(int i)
   {
     return posy[i];
   }
-  
+
   //The length.
   public int getSize()
   {
     return size;
-  }    
+  }
 }
