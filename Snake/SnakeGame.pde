@@ -131,11 +131,16 @@ public void adviceLeveling()
   }
 }
 
-//The settings.
+//The setup and settings.
+void setup()
+{
+  surface.setResizable(false);
+  game();
+}
+
 void settings()
 {
   size(WIDTH*PIXELS, (HEIGHT*PIXELS)+30, P2D);
-  game();
 }
 
 //The main method of the game that draws everything.
