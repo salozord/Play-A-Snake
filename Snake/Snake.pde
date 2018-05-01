@@ -12,7 +12,7 @@ class Snakey
   //Constructor of the snake.
   public Snakey()
   {
-    posx = new int [WIDTH*PIXELS*HEIGHT];
+    posx = new int [WIDTH*HEIGHT];
     posy = new int [WIDTH*HEIGHT];
     posx[0] = 4;
     posy[0] = 1;
