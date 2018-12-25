@@ -161,6 +161,7 @@ private int speed;
 private int level;
 
 //Boolean variable to check if its Alive.
+//
 private boolean inGame;
 
 //Boolean variable to check if its paused.
@@ -230,29 +231,29 @@ public void hasEaten()
 //Check the keys that are pressed
 public void keysPressed()
 {
-  if (keyCode == UP && dir != 3)
-  {
-    dir = 1;
-  }
-  else if (keyCode == DOWN && dir != 1)
-  {
-    dir = 3;
-  }
-  else if (keyCode == RIGHT && dir != 4)
-  {
-    dir = 2;
-  }
-  else if (keyCode == LEFT && dir != 2)
-  {
-    dir = 4;
-  }
-  else if (keyCode == ENTER && !inGame)
+  if (keyCode == ENTER && !inGame)
   {
     game();
   }
-  else if (key == 'p')
+  else if (keyPressed && key == 'p' && inGame)
   {
     isPaused = !isPaused;
+  }
+  else if (!isPaused && keyCode == UP && dir != 3)
+  {
+    dir = 1;
+  }
+  else if (!isPaused && keyCode == DOWN && dir != 1)
+  {
+    dir = 3;
+  }
+  else if (!isPaused && keyCode == RIGHT && dir != 4)
+  {
+    dir = 2;
+  }
+  else if (!isPaused && keyCode == LEFT && dir != 2)
+  {
+    dir = 4;
   }
 }
 
@@ -314,15 +315,16 @@ public void draw()
   fill(245, 0, 0);
   text("LEVEL: " + level, (WIDTH*PIXELS)-15, (HEIGHT*PIXELS)+27);
   keysPressed();
-  if(isPaused)
+  if(isPaused && inGame)
   {
+    paint();
     textAlign(CENTER, CENTER);
     fill(255, 128, 0);
     textSize(17);
     text("PAUSED!", (WIDTH*PIXELS)/2, (HEIGHT*PIXELS)/2);
-    textSize(12);
+    textSize(14);
   }
-  else if(inGame)
+  else if(inGame && !isPaused)
   {
     paint();
     snake.move(dir);
@@ -331,8 +333,9 @@ public void draw()
     levelUp();
     adviceLeveling();
   }
-  else
+  else if(!inGame && !isPaused)
   {
+    paint();
     textAlign(CENTER, CENTER);
     fill(255);
     text("GAME OVER :(\nENTER TO RESTART", (WIDTH*PIXELS)/2, (HEIGHT*PIXELS)/2);
